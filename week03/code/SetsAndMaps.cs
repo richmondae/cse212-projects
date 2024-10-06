@@ -22,7 +22,27 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        // Find pairs of words that are reverse of each other
+        // Create a set for fast lookup and a list to store pairs
+        HashSet<string> wordSet = new HashSet<string>(words);
+        List<string> pairs = new List<string>();
+
+        // Loop through each word in the list
+        foreach (string word in words)
+        {
+            // Reverse the word
+            string reversed = new string(word.Reverse().ToArray());
+
+            // If the reversed word exists in the set and it's not the same word
+            if (wordSet.Contains(reversed) && word != reversed)
+            {
+                // Add the pair and remove them from the set to avoid duplicates
+                pairs.Add($"{word} & {reversed}");
+                wordSet.Remove(word); 
+                wordSet.Remove(reversed);
+            }
+        }
+        return pairs.ToArray(); // Return the result as an array
     }
 
     /// <summary>
@@ -43,8 +63,22 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
-        }
+            if (fields.Length > 3)
+            {
+                // The degree is in the 4th column
+                var degree = fields[3].Trim();
 
+                // If the degree hasn't been seen before, add it to the dictionary
+                if (!degrees.ContainsKey(degree))
+                {
+                    degrees[degree] = 0;
+                }
+
+                // Increment the count for this degree
+                degrees[degree]++;
+            }
+        }
+        // Return the dictionary
         return degrees;
     }
 
@@ -67,7 +101,43 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Clean up both words (remove spaces and make them lowercase)
+        var cleanedWord1 = new string(word1.Where(c => !char.IsWhiteSpace(c)).Select(c => char.ToLower(c)).ToArray());
+        var cleanedWord2 = new string(word2.Where(c => !char.IsWhiteSpace(c)).Select(c => char.ToLower(c)).ToArray());
+
+        // If the words aren't the same length, they can't be anagrams
+        if (cleanedWord1.Length != cleanedWord2.Length)
+        {
+            return false;
+        }
+
+        // Count the number of each letter in word1
+        var letterCount = new Dictionary<char, int>();
+
+        foreach (char c in cleanedWord1)
+        {
+            if (letterCount.ContainsKey(c))
+            {
+                letterCount[c]++;
+            }
+            else
+            {
+                letterCount[c] = 1;
+            }
+        }
+
+        // Check that word2 has the same letters
+        foreach (char c in cleanedWord2)
+        {
+            if (!letterCount.ContainsKey(c) || letterCount[c] == 0)
+            {
+                return false; // Not an anagram if it has different letters
+            }
+
+            letterCount[c]--;
+        }
+
+        return true; // If everything matches, they're anagrams
     }
 
     /// <summary>
@@ -101,6 +171,15 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+      // Prepare a list to store the earthquake summaries
+        List<string> summaries = new List<string>();
+
+        // Loop through each earthquake and create a summary string
+        foreach (var feature in featureCollection.Features)
+        {
+            summaries.Add($"{feature.Properties.Place} - Magnitude: {feature.Properties.Magnitude}");
+        }
+
+        return summaries.ToArray(); // Return the list of summaries as an array
     }
 }

@@ -33,6 +33,12 @@ public class Maze
     public void MoveLeft()
     {
         // FILL IN CODE
+         // Check if the current position exists in the map and whether we can move left
+        if (!_mazeMap.TryGetValue((_currX, _currY), out var directions) || !directions[0])
+        {
+            throw new InvalidOperationException("Can't go that way!"); // Error if we hit a wall
+        }
+        _currX -= 1; // Move left by decreasing X position
     }
 
     /// <summary>
@@ -42,6 +48,12 @@ public class Maze
     public void MoveRight()
     {
         // FILL IN CODE
+           // Check if the current position exists in the map and whether we can move right
+        if (!_mazeMap.TryGetValue((_currX, _currY), out var directions) || !directions[1])
+        {
+            throw new InvalidOperationException("Can't go that way!"); // Error if we hit a wall
+        }
+        _currX += 1; // Move right by increasing X position
     }
 
     /// <summary>
@@ -51,6 +63,12 @@ public class Maze
     public void MoveUp()
     {
         // FILL IN CODE
+        // Check if the current position exists in the map and whether we can move up
+        if (!_mazeMap.TryGetValue((_currX, _currY), out var directions) || !directions[2])
+        {
+            throw new InvalidOperationException("Can't go that way!"); // Error if we hit a wall
+        }
+        _currY -= 1; // Move up by decreasing Y position
     }
 
     /// <summary>
@@ -60,6 +78,12 @@ public class Maze
     public void MoveDown()
     {
         // FILL IN CODE
+         // Check if the current position exists in the map and whether we can move down
+        if (!_mazeMap.TryGetValue((_currX, _currY), out var directions) || !directions[3])
+        {
+            throw new InvalidOperationException("Can't go that way!"); // Error if we hit a wall
+        }
+        _currY += 1; // Move down by increasing Y position
     }
 
     public string GetStatus()
