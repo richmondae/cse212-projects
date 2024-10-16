@@ -15,7 +15,13 @@ public static class Recursion
     public static int SumSquaresRecursive(int n)
     {
         // TODO Start Problem 1
-        return 0;
+        // Base case: if n is less than or equal to 0, return 0
+        if (n <= 0)
+        {
+            return 0;
+        }
+        // Recursive case: return n^2 plus the sum of squares for (n-1)
+        return n * n + SumSquaresRecursive(n - 1);;
     }
 
     /// <summary>
@@ -40,6 +46,20 @@ public static class Recursion
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
         // TODO Start Problem 2
+         // Base case: if word reaches the desired size, print it
+        if (word.Length == size)
+        {
+            results.Add(word);
+            return;
+        }
+
+        // Recursive case: for each letter, form new words and recurse
+        for (int i = 0; i < letters.Length; i++)
+        {
+            char letter = letters[i];  // Select a letter
+            string remainingLetters = letters.Substring(0, i) + letters.Substring(i + 1); // Remaining letters
+            PermutationsChoose(results, remainingLetters, size, word + letter);  // Recurse with the updated word
+        }
     }
 
     /// <summary>
@@ -97,9 +117,14 @@ public static class Recursion
             return 4;
 
         // TODO Start Problem 3
-
+        if (remember.ContainsKey(s))
+        {
+            return remember[s];
+        }
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways =  CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) +  CountWaysToClimb(s - 3);
+        // Cache the result for future use
+        remember[s] = ways;
         return ways;
     }
 
@@ -119,7 +144,33 @@ public static class Recursion
     public static void WildcardBinary(string pattern, List<string> results)
     {
         // TODO Start Problem 4
+        // Helper function to generate binary strings from the pattern recursively
+        void GenerateBinaryStrings(string p, int index, string current)
+        {
+            // Base case: if we've reached the end of the pattern, add to results
+            if (index == p.Length)
+            {
+                results.Add(current);
+                return;
+            }
+
+            // Recursive case: if current character is not '*', continue building the string
+            if (p[index] != '*')
+            {
+                GenerateBinaryStrings(p, index + 1, current + p[index]);
+            }
+            // If it's '*', branch to create both '0' and '1' possibilities
+            else
+            {
+                GenerateBinaryStrings(p, index + 1, current + '0');
+                GenerateBinaryStrings(p, index + 1, current + '1');
+            }
+        }
+
+        // Start the recursive process from index 0 with an empty string
+        GenerateBinaryStrings(pattern, 0, "");
     }
+
 
     /// <summary>
     /// Use recursion to insert all paths that start at (0,0) and end at the
@@ -137,7 +188,35 @@ public static class Recursion
 
         // TODO Start Problem 5
         // ADD CODE HERE
+        // Add current position to the path
+        currPath.Add((x, y));
 
-        // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+        // If we've reached the end, add the path to results and backtrack
+        if (maze.IsEnd(x, y))
+        {
+            results.Add(string.Join(" -> ", currPath));
+            currPath.RemoveAt(currPath.Count - 1);  // Remove last point to backtrack
+            return;
+        }
+
+        // Define possible movements: right, down, left, up
+        int[] dx = { 1, 0, -1, 0 };
+        int[] dy = { 0, 1, 0, -1 };
+
+        // Try all possible directions
+        for (int i = 0; i < 4; i++)
+        {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            // If the move is valid, recursively try to solve from that point
+            if (maze.IsValidMove(currPath, newX, newY))
+            {
+                SolveMaze(results, maze, newX, newY, currPath);
+            }
+        }
+
+        // Backtrack by removing the current position from the path
+        currPath.RemoveAt(currPath.Count - 1);
     }
 }
